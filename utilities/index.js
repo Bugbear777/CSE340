@@ -24,8 +24,6 @@ Util.getNav = async function (req, res, next) {
   return list
 }
 
-module.exports = Util
-
 /* **************************************
 * Build the classification view HTML
 * ************************************ */
@@ -54,9 +52,48 @@ Util.buildClassificationGrid = async function(data){
     })
     grid += '</ul>'
   } else { 
-    grid += '<p class="notice">Sorry, no matching vehicles could be found.</p>'
+    grid = '<p class="notice">Sorry, no matching vehicles could be found.</p>'
   }
   return grid
+}
+
+/* **************************************
+* Build the inventory detail view HTML
+* ************************************ */
+Util.buildInventoryDetail = function(vehicle){
+  let detail = ''
+  if (vehicle) {
+    const price = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD"
+    }).format(vehicle.inv_price);
+
+    const miles = new Intl.NumberFormat("en-US").format(vehicle.inv_miles);
+
+    detail += '<section class="inv-detail">'
+    detail += '  <div class="inv-detail__image">'
+    detail += `    <img src="${vehicle.inv_image}" alt="Image of ${vehicle.inv_make} ${vehicle.inv_model} on CSE Motors" />`
+    detail += '  </div>'
+
+    detail += '  <div class="inv-detail__content">'
+    detail += `    <h2 class="inv-detail__headline">${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}</h2>`
+    detail += '    <div class="inv-detail__stats">'
+    detail += `      <p><strong>Price:</strong> ${price}</p>`
+    detail += `      <p><strong>Mileage:</strong> ${miles} miles</p>`
+    detail += `      <p><strong>Color:</strong> ${vehicle.inv_color}</p>`
+    detail += `      <p><strong>Classification:</strong> ${vehicle.classification_name}</p>`
+    detail += '    </div>'
+
+    detail += '    <div class="inv-detail__description">'
+    detail += '      <h3>Description</h3>'
+    detail += `      <p>${vehicle.inv_description}</p>`
+    detail += '    </div>'
+    detail += '  </div>'
+    detail += '</section>'
+  } else {
+    detail = '<p class="notice">Sorry, vehicle details could not be found.</p>'
+  }
+  return detail
 }
 
 /* ****************************************
@@ -65,3 +102,5 @@ Util.buildClassificationGrid = async function(data){
  * General Error Handling
  **************************************** */
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+
+module.exports = Util

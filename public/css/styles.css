@@ -236,3 +236,127 @@ h1{
     width: auto;
   }
 }
+
+/******* Inventory Classification Grid ***************/
+#inv-display{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+#inv-display li{
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: transform 0.12s ease;
+}
+
+#inv-display li:hover{
+  transform: translateY(-2px);
+}
+
+#inv-display img{
+  width: 100%;
+  height: 180px;
+  display: block;
+  object-fit: cover;
+}
+
+#inv-display .namePrice{
+  padding: 12px 14px 14px;
+}
+
+#inv-display .namePrice hr{
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 10px 0 12px;
+}
+
+#inv-display .namePrice h2{
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+#inv-display .namePrice a{
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+#inv-display .namePrice a:hover{
+  text-decoration: underline;
+}
+
+#inv-display .namePrice span{
+  display: inline-block;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+
+/******* Inventory Detail View ***************/
+.inv-detail{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.inv-detail__image img{
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+}
+
+.inv-detail__headline{
+  margin: 0 0 12px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.inv-detail__stats{
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.inv-detail__stats p{
+  margin: 8px 0;
+  color: var(--color-text);
+}
+
+.inv-detail__description h3{
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.inv-detail__description p{
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* Responsive: stack into one column on small screens */
+@media (max-width: 700px) {
+  .inv-detail{
+    grid-template-columns: 1fr;
+  }
+}
