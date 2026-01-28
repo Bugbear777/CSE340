@@ -5,22 +5,23 @@
     <h1><%= title %></h1>
 
     <!-- Flash Message Display -->
-    <% if (locals.messages) { %>
-      <% if (messages.notice) { %>
-        <div class="flash flash--notice">
-          <%= messages.notice %>
-        </div>
-      <% } %>
-
-      <% if (messages.error) { %>
-        <div class="flash flash--error">
-          <%= messages.error %>
-        </div>
-      <% } %>
+    <% if (locals.messages && typeof locals.messages === "function") { %>
+      <%- locals.messages() %>
     <% } %>
 
+    <% if (errors && errors.length > 0) { %>
+      <div class="flash flash--error">
+        <ul>
+          <% errors.forEach(error => { %>
+            <li><%= error.msg %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+
     <!-- Login Form -->
-    <form class="account-form" action="/account/login" method="post">
+    <form class="account-form" id="loginForm" action="/account/login" method="post">
 
       <!-- Email -->
       <div class="form-group">
@@ -31,6 +32,7 @@
           name="account_email"
           placeholder="you@example.com"
           required
+          value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
         />
       </div>
 
