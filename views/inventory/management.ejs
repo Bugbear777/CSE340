@@ -1,0 +1,15 @@
+<main class="inventory-main">
+  <section class="inventory-card">
+    <h1><%= title %></h1>
+
+    <% if (locals.messages && typeof locals.messages === "function") { %>
+      <%- locals.messages() %>
+    <% } %>
+
+    <div class="inventory-actions">
+      <a class="btn btn--primary" href="/inv/add-classification">Add New Classification</a>
+      <a class="btn btn--primary" href="/inv/add-inventory">Add New Inventory Item</a>
+    </div>
+  </section>
+</main>
+
