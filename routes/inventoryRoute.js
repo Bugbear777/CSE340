@@ -21,6 +21,12 @@ router.post("/add-classification", invValidate.classificationRules(), invValidat
 router.get("/add-inventory", utilities.handleErrors(invController.buildAddInventory))
 // Route to handle add inventory form submission
 router.post("/add-inventory", invValidate.inventoryRules(), invValidate.checkInventoryData, utilities.handleErrors(invController.addInventory))
+// Route to deliver edit inventory view
+router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
+// Deliver inventory item edit view
+router.get("/edit/:inv_id", utilities.handleErrors(invController.buildEditInventoryView))
+// Handle inventory item update
+router.post("/update/", invValidate.inventoryRules(), invValidate.checkUpdateData, utilities.handleErrors(invController.updateInventory))
 
 
 module.exports = router;

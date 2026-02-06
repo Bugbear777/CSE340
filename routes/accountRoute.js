@@ -4,6 +4,14 @@ const utilities = require("../utilities")
 const accountController = require("../controllers/accountController")
 const regValidate = require('../utilities/account-validation')
 
+// Account management (default) route
+router.get(
+  "/",
+  utilities.checkJWTToken,
+  utilities.handleErrors(accountController.buildAccountManagement)
+)
+
+// Deliver login view (GET /account/login)
 router.get(
   "/login",
   utilities.handleErrors(accountController.buildLogin)
@@ -24,9 +32,9 @@ router.post(
 // Process the login attempt
 router.post(
   "/login",
-  (req, res) => {
-    res.status(200).send('login process')
-  }
+  regValidate.loginRules(),
+  regValidate.checkLoginData,
+  utilities.handleErrors(accountController.accountLogin)
 )
 
 module.exports = router
