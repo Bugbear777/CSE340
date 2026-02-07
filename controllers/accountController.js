@@ -105,7 +105,7 @@ async function accountLogin(req, res) {
       return res.redirect("/account/")
     }
     else {
-      req.flash("message notice", "Please check your credentials and try again.")
+      req.flash("notice", "Please check your credentials and try again.")
       res.status(400).render("account/login", {
         title: "Login",
         nav,
@@ -128,8 +128,128 @@ async function buildAccountManagement(req, res, next) {
     title: "Account Management",
     nav,
     errors: null,
-    message: req.flash("notice") // or whatever key you use
+    message: req.flash("notice")
   })
 }
 
-module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement }
+/* ****************************************
+ *  Build account update view
+ * *************************************** */
+async function buildUpdateAccount(req, res, next) {
+  const nav = await utilities.getNav()
+  const account_id = parseInt(req.params.account_id)
+
+  if (!res.locals.accountData) {
+    req.flash("notice", "Please log in.")
+    return res.redirect("/account/login")
+  }
+
+  if (account_id !== res.locals.accountData.account_id) {
+    req.flash("notice", "You are not authorized to update that account.")
+    return res.redirect("/account/")
+  }
+
+  const accountData = await accountModel.getAccountById(account_id)
+
+  res.render("account/update", {
+    title: "Update Account",
+    nav,
+    errors: null,
+    accountData,
+    account_id,
+  })
+}
+
+
+/* ****************************************
+ *  Process account info update
+ * *************************************** */
+async function updateAccount(req, res) {
+  const nav = await utilities.getNav()
+  const { account_id, account_firstname, account_lastname, account_email } = req.body
+
+  if (parseInt(account_id) !== res.locals.accountData.account_id) {
+    req.flash("notice", "Unauthorized account update.")
+    return res.redirect("/account/")
+  }
+
+  const updated = await accountModel.updateAccount(
+    account_id,
+    account_firstname,
+    account_lastname,
+    account_email
+  )
+
+  if (updated) {
+    // Refresh JWT so header/locals show updated name/email immediately
+    const newToken = jwt.sign(
+      {
+        ...res.locals.accountData,
+        account_firstname: updated.account_firstname,
+        account_lastname: updated.account_lastname,
+        account_email: updated.account_email,
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1h" }
+    )
+
+    const cookieOptions = { httpOnly: true, maxAge: 3600 * 1000 }
+    if (process.env.NODE_ENV !== "development") cookieOptions.secure = true
+    res.cookie("jwt", newToken, cookieOptions)
+
+    req.flash("notice", "Account information updated successfully.")
+  } else {
+    req.flash("notice", "Account update failed.")
+  }
+
+  // Query fresh data (rubric requirement)
+  const freshAccountData = await accountModel.getAccountById(parseInt(account_id))
+
+  // Deliver management view with message + updated account info
+  return res.render("account/management", {
+    title: "Account Management",
+    nav,
+    errors: null,
+    accountData: freshAccountData,
+  })
+}
+
+
+/* ****************************************
+ *  Process password change
+ * *************************************** */
+async function updatePassword(req, res) {
+  const nav = await utilities.getNav()
+  const { account_id, account_password } = req.body
+
+  if (parseInt(account_id) !== res.locals.accountData.account_id) {
+    req.flash("notice", "Unauthorized password update.")
+    return res.redirect("/account/")
+  }
+
+  let result = 0
+  try {
+    const hashedPassword = await bcrypt.hash(account_password, 10)
+    result = await accountModel.updatePassword(account_id, hashedPassword)
+  } catch (err) {
+    console.error(err)
+    result = 0
+  }
+
+  if (result) {
+    req.flash("notice", "Password updated successfully.")
+  } else {
+    req.flash("notice", "Password update failed.")
+  }
+
+  const freshAccountData = await accountModel.getAccountById(parseInt(account_id))
+
+  return res.render("account/management", {
+    title: "Account Management",
+    nav,
+    errors: null,
+    accountData: freshAccountData,
+  })
+}
+
+module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement, buildUpdateAccount, updateAccount, updatePassword }

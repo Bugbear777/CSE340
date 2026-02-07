@@ -126,24 +126,29 @@ Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)
 * Middleware to check token validity
 **************************************** */
 Util.checkJWTToken = (req, res, next) => {
- if (req.cookies.jwt) {
-  jwt.verify(
-   req.cookies.jwt,
-   process.env.ACCESS_TOKEN_SECRET,
-   function (err, accountData) {
-    if (err) {
-     req.flash("Please log in")
-     res.clearCookie("jwt")
-     return res.redirect("/account/login")
-    }
-    res.locals.accountData = accountData
-    res.locals.loggedin = 1
+  res.locals.loggedin = 0
+  res.locals.accountData = null
+
+  if (req.cookies.jwt) {
+    jwt.verify(
+      req.cookies.jwt,
+      process.env.ACCESS_TOKEN_SECRET,
+      function (err, accountData) {
+        if (err) {
+          req.flash("notice", "Please log in.")
+          res.clearCookie("jwt")
+          return res.redirect("/account/login")
+        }
+        res.locals.accountData = accountData
+        res.locals.loggedin = 1
+        next()
+      }
+    )
+  } else {
     next()
-   })
- } else {
-  next()
- }
+  }
 }
+
 
 /* ****************************************
  *  Check Login
@@ -156,5 +161,40 @@ Util.checkJWTToken = (req, res, next) => {
     return res.redirect("/account/login")
   }
  }
+
+ Util.checkAccountType = async (req, res, next) => {
+  try {
+    // Not logged in (no valid JWT)
+    if (!res.locals.loggedin || !res.locals.accountData) {
+      const nav = await Util.getNav()
+      req.flash("notice", "Please log in to access inventory management.")
+      return res.status(401).render("account/login", {
+        title: "Login",
+        nav,
+        errors: null,
+      })
+    }
+
+    const accountType = res.locals.accountData.account_type
+
+    // Authorized
+    if (accountType === "Employee" || accountType === "Admin") {
+      return next()
+    }
+
+    // Logged in but not authorized
+    const nav = await Util.getNav()
+    req.flash("notice", "You must be an Employee or Admin to access that page.")
+    return res.status(403).render("account/login", {
+      title: "Login",
+      nav,
+      errors: null,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+
 
 module.exports = Util

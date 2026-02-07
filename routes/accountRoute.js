@@ -37,5 +37,36 @@ router.post(
   utilities.handleErrors(accountController.accountLogin)
 )
 
+// Process the logout
+router.get("/logout", (req, res) => {
+  res.clearCookie("jwt")
+  res.locals.loggedin = 0
+  req.flash("notice", "You have been logged out.")
+  res.redirect("/")
+})
+
+router.get(
+  "/update/:account_id",
+  utilities.checkJWTToken,
+  utilities.handleErrors(accountController.buildUpdateAccount)
+)
+
+// Process account info update
+router.post(
+  "/update",
+  regValidate.updateRules(),
+  regValidate.checkUpdateData,
+  utilities.handleErrors(accountController.updateAccount)
+)
+
+// Process password change
+router.post(
+  "/update-password",
+  regValidate.passwordRules(),
+  regValidate.checkPasswordData,
+  utilities.handleErrors(accountController.updatePassword)
+)
+
+
 module.exports = router
 

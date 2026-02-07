@@ -1,19 +1,26 @@
-<main>
-  <h1><%= title %></h1>
+<main class="account-main">
+  <section class="account-card">
+    <h1><%= title %></h1>
 
-  <% if (typeof message !== "undefined" && message) { %>
-    <div class="flash flash--success"><%= message %></div>
-  <% } %>
+    <% if (locals.messages && typeof locals.messages === "function") { %>
+      <%- locals.messages() %>
+    <% } %>
 
-  <% if (typeof errors !== "undefined" && errors && errors.length > 0) { %>
-    <div class="flash flash--error">
-      <ul>
-        <% errors.forEach(error => { %>
-          <li><%= error.msg ?? error %></li>
-        <% }) %>
-      </ul>
+    <h2>Welcome <%= (accountData && accountData.account_firstname) ? accountData.account_firstname : "Client" %></h2>
+
+    <div class="account-help" style="text-align:left; margin-top: 0.75rem;">
+      <a href="/account/update/<%= accountData.account_id %>">Update Account Information</a>
     </div>
-  <% } %>
 
-  <p>You're logged in.</p>
+    <% if (accountData && (accountData.account_type === "Employee" || accountData.account_type === "Admin")) { %>
+      <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--color-border);">
+        <h3 style="margin: 0 0 0.5rem;">Inventory Management</h3>
+        <p style="margin: 0 0 1rem; color: var(--color-text-muted);">
+          Access the inventory tools to add, edit, or delete classifications and vehicles.
+        </p>
+        <a class="btn btn--primary" href="/inv/">Manage Inventory</a>
+      </div>
+    <% } %>
+  </section>
 </main>
+

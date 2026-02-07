@@ -13,6 +13,7 @@
   --color-text: #0f172a;
   --color-text-muted: #475569;
   --color-border: #e2e8f0;
+  --color-shadow: rgba(0,0,0,0.12);
 }
 
 /******* Header Styles ***************/
@@ -585,5 +586,94 @@ h1{
   border-radius: 10px;
   background: rgba(0,0,0,0.03);
   line-height: 1.35;
+}
+/* =========================
+   Inventory Management Page
+   ========================= */
+.inventory-main{
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.inventory-card{
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px var(--color-shadow);
+}
+
+.inventory-card h2{
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.inventory-card p{
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* Buttons row */
+.inventory-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1rem 0 1.25rem;
+}
+
+/* Classification select dropdown (generated HTML) */
+.inventory-card select{
+  width: 100%;
+  max-width: 420px;
+  margin: 0.75rem 0 1rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  font-size: 1rem;
+}
+
+.inventory-card select:focus{
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-shadow);
+}
+
+/* Inventory display table */
+#inventoryDisplay{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+
+#inventoryDisplay th,
+#inventoryDisplay td{
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+#inventoryDisplay th{
+  background: rgba(0,0,0,0.03);
+  font-weight: 800;
+}
+
+#inventoryDisplay tr:hover td{
+  background: rgba(0,0,0,0.02);
+}
+
+/* Make edit/delete links look consistent */
+#inventoryDisplay a{
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+#inventoryDisplay a:hover{
+  text-decoration: underline;
 }
 
