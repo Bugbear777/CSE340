@@ -62,7 +62,7 @@ Util.buildClassificationGrid = async function(data){
 /* **************************************
 * Build the inventory detail view HTML
 * ************************************ */
-Util.buildInventoryDetail = function(vehicle){
+Util.buildInventoryDetail = function(vehicle, actionHtml = "") {
   let detail = ''
   if (vehicle) {
     const price = new Intl.NumberFormat("en-US", {
@@ -86,6 +86,11 @@ Util.buildInventoryDetail = function(vehicle){
     detail += `      <p><strong>Classification:</strong> ${vehicle.classification_name}</p>`
     detail += '    </div>'
 
+    // ✅ Add action area (buttons/links)
+    if (actionHtml) {
+      detail += `    <div class="inv-detail__actions">${actionHtml}</div>`
+    }
+
     detail += '    <div class="inv-detail__description">'
     detail += '      <h3>Description</h3>'
     detail += `      <p>${vehicle.inv_description}</p>`
@@ -97,6 +102,7 @@ Util.buildInventoryDetail = function(vehicle){
   }
   return detail
 }
+
 
 Util.buildClassificationList = async function (classification_id = null) {
   let data = await invModel.getClassifications()

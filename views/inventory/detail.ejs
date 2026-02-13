@@ -1,10 +1,9 @@
-<% if (title) { %>
-  <h1><%= title %></h1>
-<% } else { %>
-  <% res.redirect('/') %>
+<h1><%= title || "Vehicle Detail" %></h1>
+
+<% if (locals.messages && typeof locals.messages === "function") { %>
+  <%- locals.messages() %>
 <% } %>
 
-<%# messages() %>
-
 <%- detail %>
+
 

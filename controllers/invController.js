@@ -1,5 +1,6 @@
 const invModel = require("../models/inventory-model")
 const utilities = require("../utilities/")
+const favoriteModel = require("../models/favorite-model")
 
 const invCont = {}
 
@@ -26,21 +27,42 @@ invCont.buildByInventoryId = async function (req, res, next) {
   const inv_id = req.params.inv_id
   const data = await invModel.getInventoryById(inv_id)
 
-  if (!data){
-    // No vehicle found by that id
+  if (!data) {
     const error = new Error("Vehicle not found")
     error.status = 404
     return next(error)
   }
-  const detail = utilities.buildInventoryDetail(data)
+
+  let actionHtml = ""
+  if (res.locals.loggedin && res.locals.accountData) {
+    const account_id = res.locals.accountData.account_id
+    const fav = await favoriteModel.isFavorite(account_id, parseInt(inv_id))
+
+    if (fav) {
+      actionHtml = `
+        <form method="post" action="/account/favorites/remove">
+          <input type="hidden" name="inv_id" value="${data.inv_id}">
+          <button class="btn btn--primary" type="submit">Remove Saved Vehicle</button>
+        </form>
+      `
+    } else {
+      actionHtml = `
+        <form method="post" action="/account/favorites/add">
+          <input type="hidden" name="inv_id" value="${data.inv_id}">
+          <button class="btn btn--primary" type="submit">Save Vehicle</button>
+        </form>
+      `
+    }
+  }
+
+  const detail = utilities.buildInventoryDetail(data, actionHtml)
   let nav = await utilities.getNav()
 
   res.render("inventory/detail", {
-  title: `${data.inv_make} ${data.inv_model}`,
-  nav,
-  detail,
-})
-
+    title: `${data.inv_make} ${data.inv_model}`,
+    nav,
+    detail,
+  })
 }
 
 /* ***************************

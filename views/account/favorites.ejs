@@ -1,0 +1,37 @@
+<main class="account-main" style="max-width: 1100px;">
+  <section class="account-card" style="background: var(--color-surface);">
+    <h1><%= title %></h1>
+
+    <% if (locals.messages && typeof locals.messages === "function") { %>
+      <%- locals.messages() %>
+    <% } %>
+
+    <% if (!favorites || favorites.length === 0) { %>
+      <p style="color: var(--color-text-muted);">
+        You don’t have any saved vehicles yet. Browse inventory and click “Save Vehicle” on a vehicle detail page.
+      </p>
+    <% } else { %>
+      <ul id="inv-display">
+        <% favorites.forEach(v => { %>
+          <li>
+            <a href="/inv/detail/<%= v.inv_id %>">
+              <img src="<%= v.inv_thumbnail %>" alt="<%= v.inv_make %> <%= v.inv_model %>">
+            </a>
+            <div class="namePrice">
+              <h2>
+                <a href="/inv/detail/<%= v.inv_id %>"><%= v.inv_make %> <%= v.inv_model %></a>
+              </h2>
+              <hr>
+              <span>$<%= new Intl.NumberFormat("en-US").format(v.inv_price) %></span>
+
+              <form method="post" action="/account/favorites/remove" style="margin-top: 0.75rem;">
+                <input type="hidden" name="inv_id" value="<%= v.inv_id %>">
+                <button class="btn btn--primary" type="submit">Remove</button>
+              </form>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </section>
+</main>

@@ -3,6 +3,8 @@ const router = new express.Router()
 const utilities = require("../utilities")
 const accountController = require("../controllers/accountController")
 const regValidate = require('../utilities/account-validation')
+const favoriteController = require("../controllers/favoriteController")
+
 
 // Account management (default) route
 router.get(
@@ -65,6 +67,25 @@ router.post(
   regValidate.passwordRules(),
   regValidate.checkPasswordData,
   utilities.handleErrors(accountController.updatePassword)
+)
+
+// Favorites (Saved Vehicles)
+router.get(
+  "/favorites",
+  utilities.checkJWTToken,
+  utilities.handleErrors(favoriteController.buildFavorites)
+)
+
+router.post(
+  "/favorites/add",
+  utilities.checkJWTToken,
+  utilities.handleErrors(favoriteController.addFavorite)
+)
+
+router.post(
+  "/favorites/remove",
+  utilities.checkJWTToken,
+  utilities.handleErrors(favoriteController.removeFavorite)
 )
 
 

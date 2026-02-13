@@ -12,6 +12,11 @@
       <a href="/account/update/<%= accountData.account_id %>">Update Account Information</a>
     </div>
 
+    <div class="account-help" style="text-align:left; margin-top: 0.75rem;">
+      <a href="/account/favorites">View Saved Vehicles</a>
+    </div>
+
+
     <% if (accountData && (accountData.account_type === "Employee" || accountData.account_type === "Admin")) { %>
       <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--color-border);">
         <h3 style="margin: 0 0 0.5rem;">Inventory Management</h3>

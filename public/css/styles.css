@@ -676,4 +676,10 @@ h1{
 #inventoryDisplay a:hover{
   text-decoration: underline;
 }
+.inv-detail__actions{
+  margin: 0 0 16px;
+}
+.inv-detail__actions form{
+  margin: 0;
+}
 
